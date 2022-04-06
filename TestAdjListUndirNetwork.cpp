@@ -79,7 +79,7 @@ int main(void)
 			{19, infity, 25, 25, 26, infity}
 		};
 		char c = 'a', e, e1, e2;
-		int n = 4, v, v1, v2, w;
+		int n = 6, v, v1, v2, w;
 
 		AdjListUndirNetwork<char, int> network(vexs, n);
 
@@ -176,6 +176,11 @@ int main(void)
 					}
 					break;
 				case '*':
+					cout << endl
+						 << "连通分量数目为: " << network.GetBranchNum();
+					break;
+				case '-':
+					break;
 			}
         }
 	}

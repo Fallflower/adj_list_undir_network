@@ -16,10 +16,10 @@ protected:
 	mutable Status *tag;					        // 标志数组				
 	WeightType infinity;							// 无穷大的值
 
-	int helpGetBranch_viaBFS(const AdjListUndirNetwork<ElemType, WeightType> &network, int v, int*& vexs) const;
+	int helpGetBranch_viaBFS(int v) const;
 	void BFS(const AdjListUndirNetwork<ElemType, WeightType> &network, int v, void (*Visit)(const ElemType &)) const;
 	void DFS(const AdjListUndirNetwork<ElemType, WeightType> &network, int v, void (*Visit)(const ElemType &)) const;
-	
+	void RefreshTag() const;
 
 public:
 // 抽象数据类型方法声明及重载编译系统默认方法声明:
@@ -31,7 +31,9 @@ public:
 		WeightType infinit = (WeightType)DEFAULT_INFINITY);
 		// ok 构造允许的顶点最大数目为vertexMaxNum,infinit表示无穷大,边数为0的无向网
 	~AdjListUndirNetwork();						 // ok 析构函数
+
 	void Clear();			                     // ok 清空无向网			 
+	
 	bool IsEmpty();                              // ok 判断无向网是否为空 
 	int GetOrder(ElemType &d) const;             // ok 求顶点的序号
 	int GetDegreeofVex(const int& v) const;		 // new 根据顶点下标求其度数
@@ -43,6 +45,7 @@ public:
 	int GetBranchNum() const;					 // new 求无向网连通分支数
 	int FirstAdjVex(int v) const;				 // ok 求无向网中顶点v的第一个邻接点			 
 	int NextAdjVex(int v1, int v2) const;		 // ok 求无向网中顶点v1的相对于v2的下一个邻接点			 
+	
 	void InsertVex(const ElemType &d);			 // ok 插入元素值为d的顶点		 
 	void InsertEdge(int v1, int v2, WeightType w);// ok 插入从顶点为v1到v2、权为w的边			 
 	void DeleteVex(const ElemType &d);			 // ok 删除元素值为d的顶点
@@ -51,6 +54,7 @@ public:
 	void SetWeight(int v1, int v2, WeightType w);// ok 设置从顶点为v1到v2的边的权值
 	Status GetTag(int v) const;				     // ok 求顶点v的标志		 
 	void SetTag(int v, Status tag) const;	     // ok 设置顶点v的标志为tag	 
+	
 	AdjListUndirNetwork(const AdjListUndirNetwork<ElemType, WeightType> &copy);	// 复制构造函数
 	AdjListUndirNetwork<ElemType, WeightType> &operator =
 		(const AdjListUndirNetwork<ElemType, WeightType> &copy); // 重载赋值运算符 
@@ -58,30 +62,26 @@ public:
 
 	/***********************/
 	int GetDegree(const int &v) const;			// 求顶点的度
-
+	void Kruskal() const;						// Kruskal算法求最小生成树
 };
 template <class ElemType, class WeightType>
-int AdjListUndirNetwork<ElemType, WeightType>::helpGetBranch_viaBFS(const AdjListUndirNetwork<ElemType, WeightType> &network, int v, int*& vexs) const
+int AdjListUndirNetwork<ElemType, WeightType>::helpGetBranch_viaBFS(int v) const
 {// 返回v所在的连通分支里的顶点个数，通过vexs传回分支中所有顶点的下标组成的数组
 	queue<int> q;
 	int u, w, count = 0;
-	delete[] vexs;
-	vexs = new int[vexNum]; 
-	//ElemType e;
-	network.SetTag(v, VISITED);
-	//network.GetElem(v, e);
+	SetTag(v, VISITED);
+	//GetElem(v, e);
 	q.push(v);
 	while (!q.empty())
 	{
 		u = q.front();
-		vexs[count] = u;
 		q.pop();
 		count++;
-		for (w = network.FirstAdjVex(u); w != -1; w = network.NextAdjVex(u,w))
-			if (network.GetTag(w) == UNVISITED)
+		for (w = FirstAdjVex(u); w != -1; w = NextAdjVex(u,w))
+			if (GetTag(w) == UNVISITED)
 			{
-				network.SetTag(w, VISITED);
-				//network.GetElem(w, e);
+				SetTag(w, VISITED);
+				//GetElem(w, e);
 				q.push(w);
 			}
 	}
@@ -112,9 +112,14 @@ void AdjListUndirNetwork<ElemType, WeightType>::BFS(const AdjListUndirNetwork<El
 			}
 	}
 }
-
-
-
+template <class ElemType, class WeightType>
+void AdjListUndirNetwork<ElemType, WeightType>::RefreshTag() const
+{
+	for (int i = 0; i < vexNum; i++)
+	{
+		tag[i] = UNVISITED;
+	}
+}
 
 // 无向网的邻接表类的实现部分
 template <class ElemType, class WeightType>
@@ -270,7 +275,25 @@ int AdjListUndirNetwork<ElemType, WeightType>::GetedgeNum() const
 // 操作结果：返回边数个数
 {
 	return edgeNum;
-}		 
+}
+
+
+template <class ElemType, class WeightType>
+int AdjListUndirNetwork<ElemType, WeightType>::GetBranchNum() const // new 求无向网连通分支数
+{
+	RefreshTag();
+	int numofBranch = 0;
+	for (int i = 0; i < vexNum; i++)
+	{
+		if (GetTag(i) == UNVISITED)
+		{
+			helpGetBranch_viaBFS(i);
+			numofBranch++;
+		}
+	}
+
+	return numofBranch;
+}
 
 template <class ElemType, class WeightType>
 int AdjListUndirNetwork<ElemType, WeightType>::FirstAdjVex(int v) const
