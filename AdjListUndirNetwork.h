@@ -1,6 +1,6 @@
 #ifndef __ADJ_LIST_NETWORK_H__
 #define __ADJ_LIST_NETWORK_H__
-#include "Assistance.h"						// 辅助软件包
+#include "method.h"						// 辅助软件包
 #include<queue>
 //#include "AdjListUndirNetworkEdge.h"		// 网络邻接表的边结点类
 #include "AdjListUndirNetworkVex.h"			// 网络邻接表的顶点结点类
@@ -444,7 +444,7 @@ void AdjListUndirNetwork<ElemType, WeightType>::DeleteEdge(int v1, int v2)
 	{
 		AdjListNetworkEdge<WeightType> *p, *q;
 		p = vexTable[v2].firstEdge;
-		while (p != NULL && p->adjVex != v2) {
+		while (p != NULL && p->adjVex != v1) {
 			q = p;
 			p = p->nextEdge;
 		}
@@ -628,4 +628,9 @@ int AdjListUndirNetwork<ElemType, WeightType>::GetDegree(const int &v) const
 	return degree;
 }
 
+template <class ElemType, class WeightType>
+void AdjListUndirNetwork<ElemType, WeightType>::Kruskal() const // Kruskal算法求最小生成树
+{
+
+}
 #endif
