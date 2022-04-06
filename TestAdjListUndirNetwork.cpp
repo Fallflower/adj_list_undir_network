@@ -180,7 +180,10 @@ int main(void)
 						 << "连通分量数目为: " << network.GetBranchNum();
 					break;
 				case '-':
+					cout << "\nKruskal算法求最小生成树" << endl;
 					network.Kruskal();
+					cout << "\nPrim算法求最小生成树" << endl;
+					network.Prim(0);
 					break;
 			}
         }

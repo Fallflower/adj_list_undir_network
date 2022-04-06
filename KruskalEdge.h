@@ -4,6 +4,9 @@
 /*
  * @Author: Metaphor
  */
+/*
+ * @Author: Metaphor
+ */
 template<class ElemType,class WeightType>
 class KruskalEdge
 {
@@ -15,6 +18,8 @@ public:
     KruskalEdge<ElemType, WeightType> &operator=(const KruskalEdge<ElemType, WeightType> &Ed);
     bool operator<=(const KruskalEdge<ElemType, WeightType> &Ed);
     bool operator>=(const KruskalEdge<ElemType, WeightType> &Ed);
+    bool operator<(const KruskalEdge<ElemType, WeightType> &Ed);
+    bool operator>(const KruskalEdge<ElemType, WeightType> &Ed);
 };
 
 template <class ElemType, class WeightType>
@@ -38,6 +43,18 @@ bool KruskalEdge<ElemType, WeightType>::operator>=(const KruskalEdge<ElemType,We
 }
 
 template <class ElemType, class WeightType>
+bool KruskalEdge<ElemType, WeightType>::operator<(const KruskalEdge<ElemType,WeightType>& Ed)
+{
+    return (weight < Ed.weight);
+}
+
+template <class ElemType, class WeightType>
+bool KruskalEdge<ElemType, WeightType>::operator>(const KruskalEdge<ElemType,WeightType>& Ed)
+{
+    return (weight > Ed.weight);
+}
+
+template <class ElemType, class WeightType>
 KruskalEdge<ElemType,WeightType>& KruskalEdge<ElemType, WeightType>::operator=(const KruskalEdge<ElemType,WeightType>& Ed)
 {
     if (&Ed != this)
@@ -48,3 +65,11 @@ KruskalEdge<ElemType,WeightType>& KruskalEdge<ElemType, WeightType>::operator=(c
     }
     return (*this);
 }
+
+
+template<class ElemType,class WeightType>
+struct CloseArcType
+{
+	WeightType lowweight;
+	int nearvertex;
+};

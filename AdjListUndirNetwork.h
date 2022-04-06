@@ -65,6 +65,7 @@ public:
 	/***********************/
 	int GetDegree(const int &v) const;			// 求顶点的度
 	void Kruskal() const;						// Kruskal算法求最小生成树
+	void Prim(int u0) const;							// Prim算法求最小生成树
 };
 template <class ElemType, class WeightType>
 int AdjListUndirNetwork<ElemType, WeightType>::helpGetBranch_viaBFS(int v) const
@@ -635,7 +636,7 @@ void AdjListUndirNetwork<ElemType, WeightType>::Kruskal() const // Kruskal算法
 {
 	int count;
 	KruskalEdge<ElemType, WeightType> KEdge;
-	MinHeap<KruskalEdge<ElemType,WeightType> ha(edgeNum);
+	MinHeap<KruskalEdge<ElemType,WeightType>> ha(edgeNum);
 	ElemType *kVex, v1, v2;
 	kVex = new ElemType[vexNum];
 	for (int i = 0; i < vexNum; i++)
@@ -659,7 +660,7 @@ void AdjListUndirNetwork<ElemType, WeightType>::Kruskal() const // Kruskal算法
 	{
 		ha.DeleteTop(KEdge);
 		v1 = KEdge.vertex1;
-		v2 - KEdge.vertex2;
+		v2 = KEdge.vertex2;
 		if (f.Differ(v1,v2))
 		{
 			cout << "(" << v1 << "," << v2 << "," << KEdge.weight << ")" << endl;
@@ -670,4 +671,54 @@ void AdjListUndirNetwork<ElemType, WeightType>::Kruskal() const // Kruskal算法
 	}
 	
 }
+
+template <class ElemType, class WeightType>
+void AdjListUndirNetwork<ElemType, WeightType>::Prim(int u0) const
+{
+	WeightType min;
+	ElemType v1, v2;
+	CloseArcType<ElemType, WeightType> *closeedges;
+	if (u0 < 0 || u0 >= vexNum)
+	{
+		cerr << "顶点u0不存在" << endl;
+		return;
+	}
+	int u, v, k;
+	closeedges = new CloseArcType<ElemType, WeightType>[vexNum];
+	for (int v = 0; v < vexNum; v++)
+	{
+		closeedges[v].nearvertex = u0;
+		closeedges[v].lowweight = GetWeight(u0, v);
+	}
+	closeedges[u0].nearvertex = -1;
+	closeedges[u0].lowweight = 0;
+	for ( k = 1; k < vexNum; k++)
+	{
+		min = infinity;
+		v = u0;
+		for (u = 0; u < vexNum; u++)
+			if (closeedges[u].lowweight != 0 && closeedges[u].lowweight < min)
+			{
+				v = u;
+				min = closeedges[u].lowweight;
+			}
+		if (v != u0)
+		{
+			GetElem(closeedges[v].nearvertex, v1);
+			GetElem(v, v2);
+			cout << "(" << v1 << "," << v2 << "," << min << ")" << endl;
+			closeedges[v].lowweight = 0;
+			for (u = FirstAdjVex(v); u != -1;u = NextAdjVex(v,u))
+				if(closeedges[u].lowweight != 0 &&
+					(GetWeight(v,u) < closeedges[u].lowweight))
+				{
+					closeedges[u].lowweight = GetWeight(v, u);
+					closeedges[u].nearvertex = v;
+				}
+		}
+		
+	}
+	delete[] closeedges;
+}
+
 #endif
