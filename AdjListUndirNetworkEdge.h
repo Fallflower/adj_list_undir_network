@@ -1,10 +1,13 @@
 /*
  * @Author: Metaphor
  */
+/*
+ * @Author: Metaphor
+ */
 
 #ifndef __ADJ_LIST_NETWORK_EDGE_H__
 #define __ADJ_LIST_NetWORK_EDGE_H__
-
+#include "Assistance.h"
 // 邻接表网边数据类
 template <class WeightType>
 class AdjListNetworkEdge

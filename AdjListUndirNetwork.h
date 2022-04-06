@@ -1,10 +1,12 @@
 #ifndef __ADJ_LIST_NETWORK_H__
 #define __ADJ_LIST_NETWORK_H__
-#include "method.h"						// 辅助软件包
+#include "KruskalEdge.h"						// 辅助软件包
+
 #include<queue>
 //#include "AdjListUndirNetworkEdge.h"		// 网络邻接表的边结点类
 #include "AdjListUndirNetworkVex.h"			// 网络邻接表的顶点结点类
-
+#include "equivalence.h"
+#include "MineHeap.h"
 // 无向网的邻接表类
 template <class ElemType, class WeightType>
 class AdjListUndirNetwork
@@ -631,6 +633,41 @@ int AdjListUndirNetwork<ElemType, WeightType>::GetDegree(const int &v) const
 template <class ElemType, class WeightType>
 void AdjListUndirNetwork<ElemType, WeightType>::Kruskal() const // Kruskal算法求最小生成树
 {
-
+	int count;
+	KruskalEdge<ElemType, WeightType> KEdge;
+	MinHeap<KruskalEdge<ElemType,WeightType> ha(edgeNum);
+	ElemType *kVex, v1, v2;
+	kVex = new ElemType[vexNum];
+	for (int i = 0; i < vexNum; i++)
+		GetElem(i, kVex[i]);
+	Equivalence<ElemType> f(kVex, vexNum);
+	for (int v = 0; v < vexNum; v++)
+		for (int u = FirstAdjVex(v); u > -1; u = NextAdjVex(v,u))
+		{
+			if (v < u)	// 防止重复
+			{
+				GetElem(v, v1);
+				GetElem(u, v2);
+				KEdge.vertex1 = v1;
+				KEdge.vertex2 = v2;
+				KEdge.weight = GetWeight(v, u);
+				ha.Insert(KEdge);
+			}
+		}
+	count = 0;
+	while (count < vexNum - 1)
+	{
+		ha.DeleteTop(KEdge);
+		v1 = KEdge.vertex1;
+		v2 - KEdge.vertex2;
+		if (f.Differ(v1,v2))
+		{
+			cout << "(" << v1 << "," << v2 << "," << KEdge.weight << ")" << endl;
+			f.Union(v1, v2);
+			count++;
+		}
+		
+	}
+	
 }
 #endif

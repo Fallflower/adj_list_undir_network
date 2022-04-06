@@ -180,6 +180,7 @@ int main(void)
 						 << "连通分量数目为: " << network.GetBranchNum();
 					break;
 				case '-':
+					network.Kruskal();
 					break;
 			}
         }
